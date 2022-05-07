@@ -24,32 +24,32 @@ Simply open the folder in VS code and use the "run" button.
 
 ## Global commands
 
-    clear                   // Clear the output
+    clear                   // Clears the output
                             // May not work in all environments
 
     hero                    // Prints the current player's stats
 
-    enemy                   // Prints the current enemy's stats
+    enemyinfo               // Prints the current enemy's stats
 
     help                    // Lists a list of commands
 
-    myunits                 // List of player's units
+    myunits                 // Lists the player's units
 
-    enemyunits              // List of enemy's units
+    enemyunits              // Lists the enemy's units
 
-    unit <id or name>       // diplay basic unit stats
+    unit <id or name>       // diplays basic unit stats
 
     exit                    // Terminates the game
 
-## Staring commands
+## Tactical phase commands
 
-    inc <stat> <amount>     // Increase a hero stat by amount
+    inc <stat> <amount>     // Increases a hero stat by amount
 
     buy <id> <amount>       // Buys the given unit according to amount
 
     buyspell <spellName>    // Buys the appropriate spell
 
-    place <id> <whe> <re>   // Places the unit based on id
+    deploy <id> <whe> <re>  // Deploys the unit based on id to the given point
 
     units                   // Prints the units available
 
@@ -59,25 +59,25 @@ Simply open the folder in VS code and use the "run" button.
 
     start                   // Starts the game
 
-## Game commands
+## Battle phase commands
 
-    move <row> <coloumn>    // Moves the unit to the given point
+    move <whe> <re>         // Moves the unit to the given point
 
     wait                    // Skip unit
 
-    attack <who>            // Attacks a unit
+    attack <target>         // Attacks a unit
 
     special <target>        // Do special skill
 
-    fireball <whe> <re>     // Cast fireball 3*3
+    fireball <whe> <re>     // Casts fireball 3*3
 
     resurrect <target>      // Resurrects target units
 
     stun <target>           // The target will be the last one to attack
 
-    fullheal <target>       // Heal the target to full hp (1 unit)
+    fullheal <target>       // Heals the target to full hp (1 unit)
 
-    thunderbolt <target>    // Cast thunderbolt
+    thunderbolt <target>    // Casts thunderbolt
 
 # A few remarks
 
@@ -92,8 +92,8 @@ Simply open the folder in VS code and use the "run" button.
 >
 > It is recommended to increase stats before buying units
 > the stats from the hero only applies when the unit is bought,
-> consider uning refund if you messed up the order.
+> consider using refund if you messed up the order.
 >
 > All commands parse and execute validly ALL TIME,
-> this means that you CAN use a starting command,
-> and the parsing WILL NOT FAIL if the usage ampunt of arguments are correct.
+> this means that you CAN use a tactical phase command in the battle phase,
+> and the parsing WILL NOT FAIL if the usage amount of arguments are correct.
