@@ -1,21 +1,19 @@
 # Usage
 
-The starting point is the main method in the Core class,
-that is inside the Core Package / Folder.
-
-There are already compiled files in bin
+The starting point is the main method in the Main class,
+that is inside the bin folder with already compiled files.
 
     cd bin
-    java Core.Core
+    java Main
 
 To compile (It will compile them next to the .java files)
 
-    javac src/Core/*.java src/Units/*.java
+    javac src/Core/*.java src/Commands/*.java src/Commands/CommandCollection/*.java src/Units/*.java src/GameExeptions/*.java
 
 Run self compiled
 
     cd src
-    java Core.Core
+    java Main
 
 VS code usage is possible if the necessary extensions are installed.
 Simply open the folder in VS code and use the "run" button.
