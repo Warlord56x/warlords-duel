@@ -65,6 +65,8 @@ Simply open the folder in VS code and use the "run" button.
 
     attack <target>         // Attacks a unit
 
+    heroattack <target>     // Attacks a unit with the hero
+
     special <target>        // Do special skill
 
     fireball <whe> <re>     // Casts fireball 3*3
