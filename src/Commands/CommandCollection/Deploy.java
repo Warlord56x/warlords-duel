@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.Battlefield;
 import GameExceptions.CommandException;
 import Units.Unit;
 
@@ -15,6 +16,7 @@ public final class Deploy extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
+        Battlefield map = getMap();
         Unit unit = null;
         String unitID = (String) args.get(1);
         for (Unit unitsIt : getHeroUnits()) {

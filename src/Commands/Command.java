@@ -2,8 +2,8 @@ package Commands;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.List;
+import java.util.Random;
 
 import GameExceptions.*;
 import Units.*;
@@ -17,14 +17,16 @@ public abstract class Command implements Type {
     protected final Type[] argTypes;
     public static final Class<Command> TYPE = Command.class;
 
-    protected static Battlefield map = Core.map;
-    protected static Unit currentUnit = Core.currentUnit;
     protected static Random rng = Core.rng;
-    protected static String state = Core.state;
-    protected static int turnCount = Core.turnCount;
-    protected static int difficulty = Core.difficulty;
-    protected static Hero enemyHero = Core.enemyHero;
-    protected static Hero hero = Core.hero;
+    /*
+     * protected static Battlefield map = Core.map;
+     * protected static Unit currentUnit = Core.currentUnit;
+     * protected static String state = Core.state;
+     * protected static int turnCount = Core.turnCount;
+     * protected static int difficulty = Core.difficulty;
+     * protected static Hero enemyHero = Core.enemyHero;
+     * protected static Hero hero = Core.hero;
+     */
 
     private final Hero dummy = new Hero();
     protected final Unit units[] = { new Griffin(dummy, 1), new Archer(dummy, 1), new Farmer(dummy, 1) };
@@ -88,8 +90,14 @@ public abstract class Command implements Type {
 
     protected abstract void doCommand(ArrayList<Object> args) throws CommandException;
 
-    protected static Unit getUnitById(String id) throws Exception {
-        return Core.getUnitById(id);
+    protected static Unit getUnitById(String id) throws CommandException {
+        for (Unit unit : getMap().getPlacedUnits()) {
+            String unitId = unit.getOwner().getName().charAt(0) + unit.getId();
+            if (id.equalsIgnoreCase(unitId)) {
+                return unit;
+            }
+        }
+        throw new CommandException("Core error: id does not match any unit!");
     }
 
     protected static List<String> getCommands() {
@@ -113,8 +121,16 @@ public abstract class Command implements Type {
         return Core.currentUnit;
     }
 
+    protected static void setCurrentUnit(Unit unit) {
+        Core.currentUnit = unit;
+    }
+
     protected static String getState() {
         return Core.state;
+    }
+
+    protected static void setState(String state) {
+        Core.state = state;
     }
 
     protected static int getTurnCount() {

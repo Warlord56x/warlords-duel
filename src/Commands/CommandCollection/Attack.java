@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.Battlefield;
 import GameExceptions.CommandException;
 import Units.Unit;
 
@@ -15,6 +16,7 @@ public final class Attack extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
+        Battlefield map = getMap();
         String unitID = (String) args.get(1);
         Unit unit = null;
         try {
@@ -25,8 +27,8 @@ public final class Attack extends Command {
         if (unit == null) {
             throw new CommandException("Cannot attack unit, it does not exits!");
         }
-        if (map.distanceTo(unit, currentUnit) == 1) {
-            unit.takeDamage(currentUnit, currentUnit.getAttack());
+        if (map.distanceTo(unit, getCurrentUnit()) == 1) {
+            unit.takeDamage(getCurrentUnit(), getCurrentUnit().getAttack());
         } else {
             throw new CommandException("Cannot attack foe, it is too far away!");
         }

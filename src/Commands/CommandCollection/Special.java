@@ -20,8 +20,8 @@ public final class Special extends Command {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (currentUnit.getId().equals("a")) {
-            currentUnit.specialSkill(unit);
+        if (getCurrentUnit().getId().equals("a")) {
+            getCurrentUnit().specialSkill(unit);
         }
 
     }

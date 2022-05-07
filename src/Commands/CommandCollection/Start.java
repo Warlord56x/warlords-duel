@@ -3,6 +3,7 @@ package Commands.CommandCollection;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.Battlefield;
 import GameExceptions.CommandException;
 import Units.Unit;
 
@@ -15,6 +16,7 @@ public class Start extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
+        Battlefield map = getMap();
         boolean cantStart = false;
         if (getHeroUnits() != null) {
             if (getHeroUnits().isEmpty()) {
@@ -29,10 +31,10 @@ public class Start extends Command {
         boolean enemy = false;
         boolean player = false;
         for (Unit unit : getMap().getPlacedUnits()) {
-            if (unit.getOwner() == enemyHero) {
+            if (unit.getOwner() == getEnemyHero()) {
                 enemy = true;
             }
-            if (unit.getOwner() == hero) {
+            if (unit.getOwner() == getHero()) {
                 player = true;
             }
         }
@@ -45,20 +47,20 @@ public class Start extends Command {
         if (cantStart) {
             throw new CommandException("Can't start the game with no units!");
         }
-        println("Game is stating!");
+        println("Game is starting!");
         println();
         for (Unit units2 : map.getPlacedUnits()) {
             println(units2.getName() + " - " + units2.getOwner().getName());
         }
-        if (map.getPlacedUnits().get(0).getOwner() == hero) {
+        if (map.getPlacedUnits().get(0).getOwner() == getHero()) {
             println("Player moves first with: " + map.getPlacedUnits().get(0).getName());
         }
-        if (map.getPlacedUnits().get(0).getOwner() == enemyHero) {
+        if (map.getPlacedUnits().get(0).getOwner() == getEnemyHero()) {
             println("Enemy moves first with: " + map.getPlacedUnits().get(0).getName());
         }
-        currentUnit = map.getPlacedUnits().get(0);
-        map.displayMovableTiles(currentUnit);
-        state = "Game";
+        setCurrentUnit(map.getPlacedUnits().get(0));
+        map.displayMovableTiles(getCurrentUnit());
+        setState("Game");
 
     }
 

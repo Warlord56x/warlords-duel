@@ -46,7 +46,7 @@ public class Core {
         System.out.print("\n" + str + "\n");
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void game() throws Exception {
         println("Init game...");
         println("Difficulty (1/2/3): ");
         int diff = -1;

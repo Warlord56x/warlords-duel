@@ -14,17 +14,12 @@ public final class HeroAttack extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        if (!currentUnit.getOwner().turn) {
+        if (!getCurrentUnit().getOwner().turn) {
             throw new CommandException("Hero can not attack twice a turn!");
         }
         String arg = (String) args.get(1);
-        Unit unit = null;
-        try {
-            unit = getUnitById(arg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        currentUnit.getOwner().damage(unit);
+        Unit unit = getUnitById(arg);
+        getCurrentUnit().getOwner().damage(unit);
     }
 
 }

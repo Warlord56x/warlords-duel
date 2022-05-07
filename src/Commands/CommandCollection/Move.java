@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.Battlefield;
 import GameExceptions.CommandException;
 
 public class Move extends Command {
@@ -14,8 +15,9 @@ public class Move extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        int posx = (int) args.get(1);
-        int posy = (int) args.get(2);
+        Battlefield map = getMap();
+        int posx = (int) args.get(2);
+        int posy = (int) args.get(1);
         try {
             map.moveUnit(posx, posy);
         } catch (Exception e) {
