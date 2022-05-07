@@ -12,7 +12,7 @@ import Core.*;
 public abstract class Command implements Type {
 
     protected final int params;
-    protected final String commandState;
+    protected final State commandState;
     protected final CommandParser parser = CommandCompiler.parser;
     protected final Type[] argTypes;
     public static final Class<Command> TYPE = Command.class;
@@ -31,7 +31,7 @@ public abstract class Command implements Type {
     private final Hero dummy = new Hero();
     protected final Unit units[] = { new Griffin(dummy, 1), new Archer(dummy, 1), new Farmer(dummy, 1) };
 
-    protected Command(int params, String commadState, Type... argTypes) throws CommandException {
+    protected Command(int params, State commadState, Type... argTypes) throws CommandException {
         this.params = params;
         this.commandState = commadState;
         this.argTypes = argTypes;
@@ -74,13 +74,13 @@ public abstract class Command implements Type {
             i++;
         }
 
-        if (commandState.equalsIgnoreCase(getState())) {
+        if (commandState == getState()) {
 
         }
 
         try {
             doCommand(args);
-            if (commandState.equalsIgnoreCase("Game")) {
+            if (commandState == getState()) {
                 Core.next();
             }
         } catch (CommandException e) {
@@ -125,11 +125,11 @@ public abstract class Command implements Type {
         Core.currentUnit = unit;
     }
 
-    protected static String getState() {
+    protected static State getState() {
         return Core.state;
     }
 
-    protected static void setState(String state) {
+    protected static void setState(State state) {
         Core.state = state;
     }
 

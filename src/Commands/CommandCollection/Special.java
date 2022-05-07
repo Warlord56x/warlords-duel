@@ -3,13 +3,14 @@ package Commands.CommandCollection;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public final class Special extends Command {
 
     public Special() throws CommandException {
-        super(1, "Game");
+        super(1, State.BATTLE);
     }
 
     @Override

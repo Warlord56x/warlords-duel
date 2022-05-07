@@ -8,7 +8,7 @@ import java.io.File;
 import GameExceptions.ParserException;
 
 public class CommandParser {
-    private static List<Class<Command>> commands = new ArrayList<>();
+    private static List<Class<? extends Command>> commands = new ArrayList<>();
     private static final String commandRegex = "^\s*([a-z]|[A-Z])*(\s+.+)*$";
 
     public CommandParser() {
@@ -22,8 +22,8 @@ public class CommandParser {
 
     public List<String> getCommandsList() {
         ArrayList<String> commandList = new ArrayList<>();
-        for (Class<Command> command : commands) {
-            commandList.add(command.getSimpleName());
+        for (Class<?> command : commands) {
+            commandList.add(command.getClass().getSimpleName());
         }
         return commandList;
     }
@@ -46,17 +46,17 @@ public class CommandParser {
             }
         });
 
-        // Find classes implementing ICommand.
+        // Find classes implementing Command.
         for (File file : files) {
             String className = file.getName().replaceAll(".class$", "");
             Class<?> cls = Class.forName(packageName + "." + className);
             if (Command.class.isAssignableFrom(cls)) {
-                commands.add((Class<Command>) cls);
+                commands.add(cls.asSubclass(Command.class));
             }
         }
     }
 
-    public Class<Command> parse(String line) throws ParserException {
+    public Class<? extends Command> parse(String line) throws ParserException {
 
         if (!line.matches(commandRegex)) {
             throw new ParserException("This command does not exists!");
@@ -65,7 +65,7 @@ public class CommandParser {
         String[] args = line.split(" ");
         String name = args[0];
 
-        for (Class<Command> command : commands) {
+        for (Class<? extends Command> command : commands) {
             if (command.getSimpleName().toLowerCase().equals(name)) {
                 return command;
             }

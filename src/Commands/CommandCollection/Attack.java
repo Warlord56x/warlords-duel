@@ -1,17 +1,16 @@
 package Commands.CommandCollection;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Commands.Command;
-import Core.Battlefield;
+import Core.*;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public final class Attack extends Command {
 
-    public Attack(int params, String commadState, Type[] argTypes) throws CommandException {
-        super(params, commadState, argTypes);
+    public Attack() throws CommandException {
+        super(1, State.BATTLE);
     }
 
     @Override

@@ -5,12 +5,13 @@ import java.util.ArrayList;
 
 import Commands.Command;
 import Core.Battlefield;
+import Core.State;
 import GameExceptions.CommandException;
 
 public class Move extends Command {
 
     public Move() throws CommandException {
-        super(2, "Game", new Type[] { Integer.TYPE, Integer.TYPE });
+        super(2, State.BATTLE, new Type[] { Integer.TYPE, Integer.TYPE });
     }
 
     @Override

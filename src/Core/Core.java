@@ -21,7 +21,7 @@ public class Core {
     private static boolean versus = false;
     public static int turnCount;
     private static String turn = "player";
-    public static String state = "Start";
+    public static State state = State.TACTICAL;
     public static int difficulty = 0;
     public static final String[] spells = { "resurrect", "fireball", "fullheal", "stun", "thunderbolt" };
 
@@ -90,7 +90,7 @@ public class Core {
             println("Waiting for input...");
             try {
                 CommandCompiler.execute(sc.nextLine());
-                if (state.equals("Game")) {
+                if (state == State.BATTLE) {
 
                     if (!versus) {
                         while (currentUnit.getOwner() == enemyHero) {
@@ -195,7 +195,7 @@ public class Core {
             lnprintln(str);
         }
 
-        if (state.equals("Game")) {
+        if (state == State.BATTLE) {
 
             if (command.startsWith("move")) {
                 int posx = Integer.parseInt(command.split(" ")[1]);
@@ -288,7 +288,7 @@ public class Core {
             }
         }
 
-        if (state.equals("Start")) {
+        if (state == State.TACTICAL) {
 
             if (command.equals("turn")) {
                 if (!versus) {
@@ -399,7 +399,7 @@ public class Core {
                 }
                 currentUnit = map.getPlacedUnits().get(0);
                 map.displayMovableTiles(currentUnit);
-                state = "Game";
+                state = State.BATTLE;
             }
             if (command.startsWith("buy")) {
                 String unitID = command.split(" ")[1];

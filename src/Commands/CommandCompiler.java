@@ -9,7 +9,7 @@ public class CommandCompiler {
     static final CommandParser parser = new CommandParser();
 
     public static void execute(String line) throws CommandException, ParserException {
-        Class<Command> command = parser.parse(line);
+        Class<? extends Command> command = parser.parse(line);
         try {
             command.getMethod("command", String.class).invoke(command.getDeclaredConstructor().newInstance(), line);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException

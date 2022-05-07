@@ -5,13 +5,14 @@ import java.util.ArrayList;
 
 import Commands.Command;
 import Core.Core;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public final class Buy extends Command {
 
     public Buy() throws CommandException {
-        super(2, "Tactical", new Type[] { String.class, Integer.TYPE });
+        super(2, State.TACTICAL, new Type[] { String.class, Integer.TYPE });
     }
 
     @Override

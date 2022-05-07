@@ -3,13 +3,14 @@ package Commands.CommandCollection;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public final class HeroAttack extends Command {
 
     public HeroAttack() throws CommandException {
-        super(1, "_");
+        super(1, State.IGNORE);
     }
 
     @Override

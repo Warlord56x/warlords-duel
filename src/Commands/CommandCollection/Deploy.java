@@ -5,13 +5,14 @@ import java.util.ArrayList;
 
 import Commands.Command;
 import Core.Battlefield;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public final class Deploy extends Command {
 
     public Deploy() throws CommandException {
-        super(3, "Tactical", new Type[] { String.class, Integer.TYPE, Integer.TYPE });
+        super(3, State.TACTICAL, new Type[] { String.class, Integer.TYPE, Integer.TYPE });
     }
 
     @Override

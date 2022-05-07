@@ -3,13 +3,14 @@ package Commands.CommandCollection;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public class EnemyUnits extends Command {
 
     public EnemyUnits() throws CommandException {
-        super(0, "Global");
+        super(0, State.GLOBAL);
     }
 
     @Override

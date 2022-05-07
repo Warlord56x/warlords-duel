@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import Commands.Command;
 import Core.Battlefield;
+import Core.State;
 import GameExceptions.CommandException;
 import Units.Unit;
 
 public class Start extends Command {
 
     public Start() throws CommandException {
-        super(0, "Tactical");
+        super(0, State.TACTICAL);
 
     }
 
@@ -60,7 +61,7 @@ public class Start extends Command {
         }
         setCurrentUnit(map.getPlacedUnits().get(0));
         map.displayMovableTiles(getCurrentUnit());
-        setState("Game");
+        setState(State.BATTLE);
 
     }
 

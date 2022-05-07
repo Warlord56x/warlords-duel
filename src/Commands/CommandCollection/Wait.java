@@ -3,12 +3,13 @@ package Commands.CommandCollection;
 import java.util.ArrayList;
 
 import Commands.Command;
+import Core.State;
 import GameExceptions.CommandException;
 
 public final class Wait extends Command {
 
     public Wait() throws CommandException {
-        super(0, "Game");
+        super(0, State.BATTLE);
     }
 
     @Override

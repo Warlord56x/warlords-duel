@@ -1,16 +1,16 @@
 package Commands.CommandCollection;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Units.Unit;
 import Commands.Command;
+import Core.State;
 import GameExceptions.CommandException;
 
 public final class UnitInfo extends Command {
 
-    public UnitInfo(int params, String commadState, Type[] argTypes) throws CommandException {
-        super(params, commadState, argTypes);
+    public UnitInfo() throws CommandException {
+        super(1, State.GLOBAL);
     }
 
     @Override
