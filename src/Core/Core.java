@@ -3,9 +3,8 @@ package Core;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import Commands.CommandCompiler;
 import Units.*;
 
 public class Core {
@@ -16,14 +15,14 @@ public class Core {
     public static Hero hero = new Hero("Hero", 0);
     public static Hero enemyHero = new Hero("eHero", 1);
     public static Battlefield map = new Battlefield(12, 10);
-    private static ArrayList<Unit> heroUnits = new ArrayList<>();
-    private static ArrayList<Unit> enemyHeroUnits = new ArrayList<>();
+    public static ArrayList<Unit> heroUnits = new ArrayList<>();
+    public static ArrayList<Unit> enemyHeroUnits = new ArrayList<>();
     public static Unit currentUnit = null;
     private static boolean versus = false;
-    private static int turnCount;
+    public static int turnCount;
     private static String turn = "player";
-    private static String state = "Start";
-    private static int difficulty = 0;
+    public static String state = "Start";
+    public static int difficulty = 0;
     public static final String[] spells = { "resurrect", "fireball", "fullheal", "stun", "thunderbolt" };
 
     // Shorthand Formatted sysout overrides
@@ -54,15 +53,11 @@ public class Core {
         String d = "";
         do {
             d = sc.nextLine();
-            Pattern pattern = Pattern.compile("[0-9]");
-            Matcher match = pattern.matcher(d);
-            if (d.length() == 1) {
-                if (!match.find()) {
-                    continue;
-                }
-            } else {
+            if (!d.matches("^\s*[0-9]\s*$")) {
+                print("dasd");
                 continue;
             }
+            d = d.trim();
             diff = Integer.parseInt(d);
             if (diff < 1 || diff > 3) {
                 println("Difficulty \"" + diff + "\" does not exists!");
@@ -94,7 +89,7 @@ public class Core {
             println("Current turn: " + turnCount);
             println("Waiting for input...");
             try {
-                commandExecute(parser.parse(sc));
+                CommandCompiler.execute(sc.nextLine());
                 if (state.equals("Game")) {
 
                     if (!versus) {
@@ -438,7 +433,7 @@ public class Core {
         }
     }
 
-    static Unit getUnitById(String id) throws Exception {
+    public static Unit getUnitById(String id) throws Exception {
         for (Unit unit : map.getPlacedUnits()) {
             String unitId = unit.getOwner().getName().charAt(0) + unit.getId();
             if (id.equalsIgnoreCase(unitId)) {
@@ -594,7 +589,7 @@ public class Core {
         println(str);
     }
 
-    static void next() {
+    public static void next() {
         map.getSortedUnits().remove(0);
         if (map.getSortedUnits().isEmpty()) {
             turnCount++;
@@ -611,7 +606,7 @@ public class Core {
         printOrder();
     }
 
-    static Unit buyUnits(String id, int size, Hero h) throws Exception {
+    public static Unit buyUnits(String id, int size, Hero h) throws Exception {
         Unit units = null;
         int price = 0;
         boolean e = false;

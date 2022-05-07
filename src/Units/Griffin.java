@@ -2,7 +2,7 @@ package Units;
 
 import Core.Hero;
 
-public class Griffin extends Unit {
+public final class Griffin extends Unit {
 
     public Griffin(Hero h, int size) {
         super("Griffin", "G", h, size, 15, 5, 10, 30, 7, 15);
