@@ -8,6 +8,6 @@ public final class CommandException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Command invalid: " + super.getMessage();
+        return "Command error: " + super.getMessage();
     }
 }
