@@ -198,6 +198,16 @@ public class Battlefield {
         }
     }
 
+    public void wipe() {
+        placedUnits.clear();
+        sortedUnits.clear();
+        for (int i = 0; i < wh[1] + 1; i++) {
+            for (int j = 0; j < wh[0] + 1; j++) {
+                map[i][j] = emptyTile;
+            }
+        }
+    }
+
     public void moveUnit(int posx, int posy) throws Exception {
         Unit unit = Core.currentUnit;
 

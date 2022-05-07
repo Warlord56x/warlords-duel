@@ -2,8 +2,8 @@ package Commands;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+import java.util.List;
 
 import GameExceptions.*;
 import Units.*;
@@ -69,18 +69,19 @@ public abstract class Command implements Type {
                     break;
                 default:
                     throw new ParserException(
-                            "cannot convert argument " + i + " from  string to " + type.getTypeName());
+                            "Cannot convert argument " + i + " from  string to " + type.getTypeName());
             }
             i++;
         }
 
-        if (commandState == getState()) {
-
+        if (commandState != getState()) {
+            throw new ParserException("This command cannot be used in this state, state:" + getState().name()
+                    + " expected: " + commandState);
         }
 
         try {
             doCommand(args);
-            if (commandState == getState()) {
+            if (getState() == State.BATTLE) {
                 Core.next();
             }
         } catch (CommandException e) {
@@ -141,12 +142,24 @@ public abstract class Command implements Type {
         return Core.difficulty;
     }
 
+    protected static void setDifficulty(int difficulty) {
+        Core.difficulty = difficulty;
+    }
+
     protected static Hero getHero() {
         return Core.hero;
     }
 
+    protected static void setHero(Hero hero) {
+        Core.hero = hero;
+    }
+
     protected static Hero getEnemyHero() {
         return Core.enemyHero;
+    }
+
+    protected static void setEnemyhero(Hero hero) {
+        Core.enemyHero = hero;
     }
 
     protected static ArrayList<Unit> getHeroUnits() {
@@ -155,5 +168,13 @@ public abstract class Command implements Type {
 
     protected static ArrayList<Unit> getEnemHeroUnits() {
         return Core.enemyHeroUnits;
+    }
+
+    protected static void setVersus(boolean bool) {
+        Core.versus = bool;
+    }
+
+    protected static boolean getVersus() {
+        return Core.versus;
     }
 }

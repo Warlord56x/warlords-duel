@@ -18,7 +18,7 @@ public class Core {
     public static ArrayList<Unit> heroUnits = new ArrayList<>();
     public static ArrayList<Unit> enemyHeroUnits = new ArrayList<>();
     public static Unit currentUnit = null;
-    private static boolean versus = false;
+    public static boolean versus = false;
     public static int turnCount;
     private static String turn = "player";
     public static State state = State.TACTICAL;
@@ -48,40 +48,7 @@ public class Core {
 
     public static void game() throws Exception {
         println("Init game...");
-        println("Difficulty (1/2/3): ");
-        int diff = -1;
-        String d = "";
-        do {
-            d = sc.nextLine();
-            if (!d.matches("^\s*[0-9]\s*$")) {
-                print("dasd");
-                continue;
-            }
-            d = d.trim();
-            diff = Integer.parseInt(d);
-            if (diff < 1 || diff > 3) {
-                println("Difficulty \"" + diff + "\" does not exists!");
-            }
-        } while (diff < 1 || diff > 3);
-        diff -= 1;
-        difficulty = diff;
-
-        println("Versus mode? y/n");
-        String answer;
-        do {
-            answer = sc.nextLine();
-        } while (!(answer.contains("n") || answer.contains("y")));
-        if (answer.equals("y")) {
-            versus = true;
-            println("Use the command turn to switch to player2. Difficulty is shared.");
-            enemyHero = new Hero("hero2", diff);
-        } else {
-            versus = false;
-            enemyHero = new Hero("enemy", 1);
-            setupAI();
-        }
-
-        hero = new Hero("hero", diff, 1, 1, 1, 1, 1, 1, 1);
+        gameSetup();
         sc = new Scanner(System.in);
 
         while (true) {
@@ -91,7 +58,6 @@ public class Core {
             try {
                 CommandCompiler.execute(sc.nextLine());
                 if (state == State.BATTLE) {
-
                     if (!versus) {
                         while (currentUnit.getOwner() == enemyHero) {
                             aiDo();
@@ -103,7 +69,6 @@ public class Core {
                 e.printStackTrace();
             }
         }
-
     }
 
     static void commandExecute(String command) throws Exception {
@@ -508,7 +473,8 @@ public class Core {
         return minUnit;
     }
 
-    static void setupAI() {
+    public static void setupAI() {
+        enemyHero = new Hero("enemy", 1);
         int randomG = 1;
         int randomF = 1;
         int randomA = 1;
@@ -578,6 +544,22 @@ public class Core {
                     println("AI unexpected placement error! Enemy will be having 1 less units than intended!");
                 }
             }
+        }
+    }
+
+    public static void gameWipe() {
+        map.wipe();
+        heroUnits.clear();
+        enemyHeroUnits.clear();
+    }
+
+    public static void gameSetup() {
+        if (!versus) {
+            hero = new Hero("hero", difficulty);
+            setupAI();
+        } else {
+            hero = new Hero("hero", difficulty);
+            enemyHero = new Hero("enemy", difficulty);
         }
     }
 
