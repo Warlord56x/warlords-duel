@@ -4,5 +4,7 @@ public enum State {
     TACTICAL,
     BATTLE,
     GLOBAL,
-    IGNORE
+    IGNORE,
+    PlAYER1,
+    PLAYER2
 }

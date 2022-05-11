@@ -1,0 +1,92 @@
+TODO_LIST
+
+static void commandExecute(String command) throws Exception {
+        command = command.toLowerCase();
+        // Hero h = new Hero();
+        Hero currentHero = hero;
+        // ArrayList<Unit> currentList = null;
+        // Unit units[] = { new Griffin(h, 1), new Archer(h, 1), new Farmer(h, 1) };
+
+        if (state == State.BATTLE) {
+
+            if (command.startsWith("stun")) {
+                if (currentUnit.getOwner().getStat("mana") < 7) {
+                    throw new Exception("Core error: Not enough mana!");
+                }
+                String arg = command.split(" ")[1];
+                Unit unit = getUnitById(arg);
+                map.getSortedUnits().remove(unit);
+                map.getSortedUnits().add(unit);
+                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 7);
+            }
+
+            if (command.startsWith("resurrect")) {
+                if (currentUnit.getOwner().getStat("mana") < 6) {
+                    throw new Exception("Core error: Not enough mana!");
+                }
+                String arg = command.split(" ")[1];
+                Unit unit = getUnitById(arg);
+                unit.resurrect(currentUnit.getOwner().getStat("magic") * 50);
+                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 6);
+            }
+
+            if (command.startsWith("fullheal")) {
+                if (currentUnit.getOwner().getStat("mana") < 3) {
+                    throw new Exception("Core error: Not enough mana!");
+                }
+                String arg = command.split(" ")[1];
+                Unit unit = getUnitById(arg);
+                unit.fullheal();
+                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 3);
+            }
+            if (command.startsWith("thunderbolt")) {
+                if (currentUnit.getOwner().getStat("mana") < 5) {
+                    throw new Exception("Core error: Not enough mana!");
+                }
+                String arg = command.split(" ")[1];
+                Unit unit = getUnitById(arg);
+                unit.takePureDamage(currentUnit.getOwner().getStat("magic") * 30);
+                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 5);
+            }
+            if (command.startsWith("fireball")) {
+                if (currentUnit.getOwner().getStat("mana") < 9) {
+                    throw new Exception("Core error: Not enough mana!");
+                }
+                int posx = Integer.parseInt(command.split(" ")[1]);
+                int posy = Integer.parseInt(command.split(" ")[2]);
+                map.fireball(posx, posy);
+                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 9);
+            }
+        }
+
+        if (state == State.TACTICAL) {
+
+            if (command.startsWith("buyspell")) {
+                String arg = command.split(" ")[1];
+                for (String string : currentUnit.getOwner().spells) {
+                    if (string.equals(arg)) {
+                        throw new Exception("Core error: spell already bought!");
+                    }
+                }
+                for (String string : spells) {
+                    if (string.equals(arg)) {
+                        currentUnit.getOwner().addSpell(arg);
+                        return;
+                    }
+                    throw new Exception("Core error: spell does not exits!");
+                }
+
+            }
+
+            if (command.startsWith("inc")) {
+                String stat = command.split(" ")[1];
+                int amount = Integer.parseInt(command.split(" ")[2]);
+                try {
+                    currentHero.setStat("gold", currentHero.getStat("gold") - currentHero.incStat(stat, amount));
+                } catch (Exception e) {
+                    throw e;
+                }
+                println("Current gold: " + currentHero.getStat("gold"));
+            }
+        }
+    }

@@ -11,9 +11,9 @@ public class CommandParser {
     private static List<Class<? extends Command>> commands = new ArrayList<>();
     private static final String commandRegex = "^\s*([a-z]|[A-Z])*(\s+.+)*$";
 
-    public CommandParser() {
+    public CommandParser(String packageName) {
         try {
-            loadCommands();
+            loadCommands(packageName);
         } catch (ClassNotFoundException e) {
             System.out.println("");
             e.printStackTrace();
@@ -35,8 +35,8 @@ public class CommandParser {
      * }
      */
 
-    public void loadCommands() throws ClassNotFoundException {
-        String packageName = "Commands.CommandCollection";
+    public void loadCommands(String path) throws ClassNotFoundException {
+        String packageName = path;
         java.net.URL root = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/"));
 
         // Filter .class files.

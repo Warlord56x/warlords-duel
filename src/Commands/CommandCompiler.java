@@ -6,7 +6,7 @@ import GameExceptions.CommandException;
 import GameExceptions.ParserException;
 
 public class CommandCompiler {
-    static final CommandParser parser = new CommandParser();
+    static final CommandParser parser = new CommandParser("Commands.CommandCollection");
 
     public static void execute(String line) throws CommandException, ParserException {
         Class<? extends Command> command = parser.parse(line);

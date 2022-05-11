@@ -20,7 +20,7 @@ public final class Deploy extends Command {
         Battlefield map = getMap();
         Unit unit = null;
         String unitID = (String) args.get(1);
-        for (Unit unitsIt : getHeroUnits()) {
+        for (Unit unitsIt : getHeroUnitList()) {
             if (unitsIt.getId().equalsIgnoreCase(unitID)) {
                 unit = unitsIt;
             }

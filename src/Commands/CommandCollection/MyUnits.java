@@ -17,8 +17,8 @@ public final class MyUnits extends Command {
     protected void doCommand(ArrayList<Object> args) throws CommandException {
         String str = "";
         Boolean e = false;
-        if (getHeroUnits() != null) {
-            if (getHeroUnits().isEmpty()) {
+        if (getHeroUnitList() != null) {
+            if (getHeroUnitList().isEmpty()) {
                 e = true;
             }
         } else {
@@ -27,7 +27,7 @@ public final class MyUnits extends Command {
         if (e) {
             throw new CommandException("Hero doesn't have any units!");
         }
-        for (Unit unit : getHeroUnits()) {
+        for (Unit unit : getHeroUnitList()) {
             str += "Name: " + unit.getName() + " size: " + unit.getSize() + "\n";
         }
         println(str);

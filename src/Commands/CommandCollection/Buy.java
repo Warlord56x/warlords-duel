@@ -4,9 +4,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import Commands.Command;
-import Core.Core;
 import Core.State;
 import GameExceptions.CommandException;
+import GameExceptions.HeroException;
 import Units.Unit;
 
 public final class Buy extends Command {
@@ -17,24 +17,49 @@ public final class Buy extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        String unitID = (String) args.get(1);
-        int unitSize = (int) args.get(2);
-        if (unitSize <= 0) {
-            throw new CommandException("invalid unit size");
+
+        String msg = "noerror";
+        CommandException temp = new CommandException(msg);
+        boolean ok = true;
+
+        int amount = (int) args.get(2);
+        String stat = (String) args.get(1);
+        try {
+            getCurrentHero().setStat("gold", getCurrentHero().getStat("gold") - getCurrentHero().incStat(stat, amount));
+
+        } catch (HeroException e) {
+            temp = new CommandException(e.getMessage());
+            msg = e.getMessage();
         }
-        for (Unit unit : getHeroUnits()) {
+        println("Current gold: " + getCurrentHero().getStat("gold"));
+
+        String unitID = (String) args.get(1);
+
+        if (!unitIDs.contains(unitID)) {
+            ok = false;
+        }
+
+        if (ok || msg != "noerror") {
+            throw temp;
+        }
+
+        for (Unit unit : getCurrentUnitList()) {
             if (unit.getId().equals(unitID)) {
-                throw new CommandException("unit already bought!");
+                try {
+                    getCurrentUnitList().add(getCurrentHero().buyUnits(unitID, unit.getSize() + amount));
+                    getCurrentUnitList().remove(unit);
+                    println("Current gold: " + getCurrentHero().getStat("gold"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         try {
-            getHeroUnits().add(Core.buyUnits(unitID, unitSize, getHero()));
-
+            getCurrentUnitList().add(getCurrentHero().buyUnits(unitID, amount));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        println("Current gold: " + getHero().getStat("gold"));
-
+        println("Current gold: " + getCurrentHero().getStat("gold"));
     }
 
 }

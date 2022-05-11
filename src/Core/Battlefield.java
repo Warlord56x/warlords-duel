@@ -12,6 +12,7 @@ public class Battlefield {
     public final String emptyTile = "[  ]";
     public final String moveTile = "[||]";
     public final int[] wh;
+    public boolean switchRowCol = false;
 
     public Battlefield(int width, int height) {
         this.map = new String[height + 1][width + 1];
@@ -68,6 +69,10 @@ public class Battlefield {
         }
     }
 
+    public void swapXY() {
+        switchRowCol = !switchRowCol;
+    }
+
     @Override
     public String toString() {
         String field = "";
@@ -84,6 +89,11 @@ public class Battlefield {
     }
 
     public void placeUnit(Unit unit, int posx, int posy, String turn) throws Exception {
+        if (switchRowCol) {
+            int t = posx;
+            posx = posy;
+            posy = t;
+        }
 
         if (turn.equals("player")) {
             if (posx > 2 || map[posy][posx] != emptyTile) {
@@ -210,6 +220,11 @@ public class Battlefield {
 
     public void moveUnit(int posx, int posy) throws Exception {
         Unit unit = Core.currentUnit;
+        if (switchRowCol) {
+            int t = posx;
+            posx = posy;
+            posy = t;
+        }
 
         clearDisplay();
         displayMovableTiles(unit);

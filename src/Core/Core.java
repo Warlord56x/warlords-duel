@@ -9,31 +9,23 @@ import Units.*;
 
 public class Core {
 
-    public static Random rng = new Random();
-    private static Parser parser = new Parser();
-    private static Scanner sc = new Scanner(System.in);
-    public static Hero hero = new Hero("Hero", 0);
-    public static Hero enemyHero = new Hero("eHero", 1);
+    // public static final String[] spells = { "resurrect", "fireball", "fullheal",
+    // "stun", "thunderbolt" };
     public static Battlefield map = new Battlefield(12, 10);
-    public static ArrayList<Unit> heroUnits = new ArrayList<>();
+    public static Hero enemyHero = new Hero("eHero", 1);
     public static ArrayList<Unit> enemyHeroUnits = new ArrayList<>();
+    public static Hero hero = new Hero("Hero", 0);
+    public static ArrayList<Unit> heroUnits = new ArrayList<>();
+    private static Scanner sc = new Scanner(System.in);
+    public static State state = State.TACTICAL;
+    public static State turn = State.PlAYER1;
+    public static Random rng = new Random();
     public static Unit currentUnit = null;
     public static boolean versus = false;
-    public static int turnCount;
-    private static String turn = "player";
-    public static State state = State.TACTICAL;
     public static int difficulty = 0;
-    public static final String[] spells = { "resurrect", "fireball", "fullheal", "stun", "thunderbolt" };
+    public static int turnCount = 0;
 
     // Shorthand Formatted sysout overrides
-    static void print() {
-        System.out.print("");
-    }
-
-    static void print(Object str) {
-        System.out.print(str);
-    }
-
     public static void println() {
         System.out.println();
     }
@@ -42,11 +34,8 @@ public class Core {
         System.out.println(str);
     }
 
-    static void lnprintln(Object str) {
-        System.out.print("\n" + str + "\n");
-    }
-
     public static void game() throws Exception {
+        println("Copyright (C) 2022  Dániel Török (aka Warlord56x) version: v0.2.3");
         println("Init game...");
         gameSetup();
         sc = new Scanner(System.in);
@@ -69,343 +58,6 @@ public class Core {
                 e.printStackTrace();
             }
         }
-    }
-
-    static void commandExecute(String command) throws Exception {
-        command = command.toLowerCase();
-        Hero h = new Hero();
-        Hero currentHero = hero;
-        ArrayList<Unit> currentList = null;
-        Unit units[] = { new Griffin(h, 1), new Archer(h, 1), new Farmer(h, 1) };
-
-        if (turn.equals("enemy")) {
-            currentList = enemyHeroUnits;
-            currentHero = enemyHero;
-        }
-        if (turn.equals("player")) {
-            currentList = heroUnits;
-            currentHero = hero;
-        }
-
-        if (command.equals("exit")) {
-            sc.close();
-            System.exit(0);
-        }
-        if (command.startsWith("help")) {
-            println(parser.commandsTable());
-        }
-
-        if (command.startsWith("clear")) {
-            clearConsole();
-        }
-        if (command.startsWith("units")) {
-            String str = "\n";
-            for (Unit unit : units) {
-                str += unit.getName() + "\n";
-            }
-            println(str);
-        }
-        if (command.startsWith("unit")) {
-            String arg1 = command.split(" ")[1];
-            for (Unit unit : units) {
-                if (unit.getName().equalsIgnoreCase(arg1) || unit.getId().equalsIgnoreCase(arg1)) {
-                    lnprintln(unit);
-                    return;
-                }
-            }
-            throw new Exception("Argument error: \"" + arg1 + "\"" + " is not a unit ID or name!");
-        }
-
-        if (command.startsWith("hero")) {
-            lnprintln(currentHero);
-        }
-        if (command.equals("enemy")) {
-            lnprintln(enemyHero);
-        }
-
-        if (command.startsWith("myunits")) {
-            String str = "";
-            Boolean e = false;
-            if (currentList != null) {
-                if (currentList.isEmpty()) {
-                    e = true;
-                }
-            } else {
-                e = true;
-            }
-            if (e) {
-                throw new Exception("Size error: Current hero doesn't have any units!");
-            }
-            for (Unit unit : currentList) {
-                str += "Name: " + unit.getName() + " size: " + unit.getSize() + "\n";
-            }
-            lnprintln(str);
-        }
-        if (command.startsWith("enemyunits")) {
-            String str = "";
-            Boolean e = false;
-            if (enemyHeroUnits != null) {
-                if (enemyHeroUnits.isEmpty()) {
-                    e = true;
-                }
-            } else {
-                e = true;
-            }
-            if (e) {
-                throw new Exception("Size error: Enemy hero doesn't have any units!");
-            }
-            for (Unit unit : enemyHeroUnits) {
-                str += "Name: " + unit.getName() + " size: " + unit.getSize() + "\n";
-            }
-            lnprintln(str);
-        }
-
-        if (state == State.BATTLE) {
-
-            if (command.startsWith("move")) {
-                int posx = Integer.parseInt(command.split(" ")[1]);
-                int posy = Integer.parseInt(command.split(" ")[2]);
-                map.moveUnit(posx, posy);
-                next();
-            }
-
-            if (command.startsWith("heroattack")) {
-                if (!currentUnit.getOwner().turn) {
-                    throw new Exception("Core error: hero can not attack twice a turn!");
-                }
-                String arg = command.split(" ")[1];
-                Unit unit = getUnitById(arg);
-                currentUnit.getOwner().damage(unit);
-            }
-
-            if (command.startsWith("stun")) {
-                if (currentUnit.getOwner().getStat("mana") < 7) {
-                    throw new Exception("Core error: Not enough mana!");
-                }
-                String arg = command.split(" ")[1];
-                Unit unit = getUnitById(arg);
-                map.getSortedUnits().remove(unit);
-                map.getSortedUnits().add(unit);
-                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 7);
-            }
-
-            if (command.startsWith("resurrect")) {
-                if (currentUnit.getOwner().getStat("mana") < 6) {
-                    throw new Exception("Core error: Not enough mana!");
-                }
-                String arg = command.split(" ")[1];
-                Unit unit = getUnitById(arg);
-                unit.resurrect(currentUnit.getOwner().getStat("magic") * 50);
-                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 6);
-            }
-
-            if (command.startsWith("fullheal")) {
-                if (currentUnit.getOwner().getStat("mana") < 3) {
-                    throw new Exception("Core error: Not enough mana!");
-                }
-                String arg = command.split(" ")[1];
-                Unit unit = getUnitById(arg);
-                unit.fullheal();
-                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 3);
-            }
-            if (command.startsWith("thunderbolt")) {
-                if (currentUnit.getOwner().getStat("mana") < 5) {
-                    throw new Exception("Core error: Not enough mana!");
-                }
-                String arg = command.split(" ")[1];
-                Unit unit = getUnitById(arg);
-                unit.takePureDamage(currentUnit.getOwner().getStat("magic") * 30);
-                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 5);
-            }
-            if (command.startsWith("fireball")) {
-                if (currentUnit.getOwner().getStat("mana") < 9) {
-                    throw new Exception("Core error: Not enough mana!");
-                }
-                int posx = Integer.parseInt(command.split(" ")[1]);
-                int posy = Integer.parseInt(command.split(" ")[2]);
-                map.fireball(posx, posy);
-                currentUnit.getOwner().setStat("mana", currentUnit.getOwner().getStat("mana") - 9);
-            }
-
-            if (command.equals("wait")) {
-                next();
-            }
-
-            if (command.startsWith("attack")) {
-                String unitID = command.split(" ")[1];
-                Unit unit = getUnitById(unitID);
-                if (unit == null) {
-                    throw new Exception("Core error: cannot attack unit, it does not exits!");
-                }
-                if (map.distanceTo(unit, currentUnit) == 1) {
-                    unit.takeDamage(currentUnit, currentUnit.getAttack());
-                } else {
-                    throw new Exception("Core error: cannot attack foe, it is too far away!");
-                }
-                next();
-            }
-
-            if (command.startsWith("special")) {
-                Unit unit = getUnitById(command.split(" ")[1]);
-                if (currentUnit.getId().equals("a")) {
-                    currentUnit.specialSkill(unit);
-                }
-            }
-        }
-
-        if (state == State.TACTICAL) {
-
-            if (command.equals("turn")) {
-                if (!versus) {
-                    throw new Exception("Versus error: versus mode is not enabled! Restart the game to enable!");
-                }
-                String tempturn = turn;
-                if (currentHero == hero) {
-                    currentHero = enemyHero;
-                    turn = "enemy";
-                } else if (currentHero == enemyHero) {
-                    currentHero = hero;
-                    turn = "player";
-                }
-                println("turn changed to:" + turn + " from: " + tempturn + "!");
-            }
-
-            if (command.startsWith("buyspell")) {
-                String arg = command.split(" ")[1];
-                for (String string : currentUnit.getOwner().spells) {
-                    if (string.equals(arg)) {
-                        throw new Exception("Core error: spell already bought!");
-                    }
-                }
-                for (String string : spells) {
-                    if (string.equals(arg)) {
-                        currentUnit.getOwner().addSpell(arg);
-                        return;
-                    }
-                    throw new Exception("Core error: spell does not exits!");
-                }
-
-            }
-
-            if (command.startsWith("inc")) {
-                String stat = command.split(" ")[1];
-                int amount = Integer.parseInt(command.split(" ")[2]);
-                try {
-                    currentHero.setStat("gold", currentHero.getStat("gold") - currentHero.incStat(stat, amount));
-                } catch (Exception e) {
-                    throw e;
-                }
-                println("Current gold: " + currentHero.getStat("gold"));
-            }
-
-            if (command.startsWith("place")) {
-                Unit unit = null;
-                String unitID = command.split(" ")[1];
-                for (Unit unitsIt : currentList) {
-                    if (unitsIt.getId().equalsIgnoreCase(unitID)) {
-                        unit = unitsIt;
-                    }
-                }
-                if (unit == null) {
-                    throw new Exception("Core error: unit does not exists among the current hero's units!");
-                }
-                int posx = Integer.parseInt(command.split(" ")[2]);
-                int posy = Integer.parseInt(command.split(" ")[3]);
-                try {
-                    map.placeUnit(unit, posx, posy, turn);
-                } catch (Exception e) {
-                    throw e;
-                }
-            }
-
-            if (command.equals("start")) {
-                boolean cantStart = false;
-                if (heroUnits != null) {
-                    if (heroUnits.isEmpty()) {
-                        cantStart = true;
-                    }
-                } else {
-                    cantStart = true;
-                }
-                if (map.getPlacedUnits().isEmpty()) {
-                    throw new Exception("Core error: There are no units placed by any hero!");
-                }
-                boolean enemy = false;
-                boolean player = false;
-                for (Unit unit : map.getPlacedUnits()) {
-                    if (unit.getOwner() == enemyHero) {
-                        enemy = true;
-                    }
-                    if (unit.getOwner() == hero) {
-                        player = true;
-                    }
-                }
-                if (!player) {
-                    throw new Exception("Core error: There are no units placed by the player!");
-                }
-                if (!enemy) {
-                    throw new Exception("Core error: There are no units placed by the enemy!");
-                }
-                if (cantStart) {
-                    throw new Exception("Core error: Can't start the game with no units!");
-                }
-                println("Game is stating!");
-                println();
-                for (Unit units2 : map.getPlacedUnits()) {
-                    println(units2.getName() + " - " + units2.getOwner().getName());
-                }
-                if (map.getPlacedUnits().get(0).getOwner() == hero) {
-                    turn = "player";
-                    lnprintln("Player moves first with: " + map.getPlacedUnits().get(0).getName());
-                }
-                if (map.getPlacedUnits().get(0).getOwner() == enemyHero) {
-                    turn = "enemy";
-                    lnprintln("Enemy moves first with: " + map.getPlacedUnits().get(0).getName());
-                }
-                currentUnit = map.getPlacedUnits().get(0);
-                map.displayMovableTiles(currentUnit);
-                state = State.BATTLE;
-            }
-            if (command.startsWith("buy")) {
-                String unitID = command.split(" ")[1];
-                int unitSize = Integer.parseInt(command.split(" ")[2]);
-                if (unitSize <= 0) {
-                    throw new Exception("Core error: invalid unit size");
-                }
-                for (Unit unit : currentList) {
-                    if (unit.getId().equals(unitID)) {
-                        throw new Exception("Core error: unit already bought!");
-                    }
-                }
-                try {
-                    currentList.add(buyUnits(unitID, unitSize, currentHero));
-
-                } catch (Exception e) {
-                    throw e;
-                }
-                println("Current gold: " + currentHero.getStat("gold"));
-            }
-
-            if (command.equals("refund")) {
-                int refund = 0;
-                for (Unit unit : currentList) {
-                    refund += unit.getStat("cost") * unit.getSize();
-                    println(unit.getStat("cost") + "" + "" + unit.getSize());
-                }
-                currentHero.setStat("gold", currentHero.getStat("gold") + refund);
-                println("Current gold: " + currentHero.getStat("gold"));
-            }
-        }
-    }
-
-    public static Unit getUnitById(String id) throws Exception {
-        for (Unit unit : map.getPlacedUnits()) {
-            String unitId = unit.getOwner().getName().charAt(0) + unit.getId();
-            if (id.equalsIgnoreCase(unitId)) {
-                return unit;
-            }
-        }
-        throw new Exception("Core error: id does not match any unit!");
     }
 
     static void aiDo() throws Exception {
@@ -496,11 +148,11 @@ public class Core {
                 break;
         }
         try {
-            enemyHeroUnits.add(buyUnits("g", randomG, enemyHero));
-            enemyHeroUnits.add(buyUnits("f", randomF, enemyHero));
-            enemyHeroUnits.add(buyUnits("a", randomA, enemyHero));
-            enemyHeroUnits.add(buyUnits("k", randomG, enemyHero));
-            enemyHeroUnits.add(buyUnits("p", randomG, enemyHero));
+            enemyHeroUnits.add(enemyHero.buyUnits("g", randomG));
+            enemyHeroUnits.add(enemyHero.buyUnits("f", randomF));
+            enemyHeroUnits.add(enemyHero.buyUnits("a", randomA));
+            enemyHeroUnits.add(enemyHero.buyUnits("k", randomG));
+            enemyHeroUnits.add(enemyHero.buyUnits("p", randomG));
             enemyHero.setStat("gold", enemyHero.getStat("gold") - enemyHero.incStat("attack", rng.nextInt(2) + 1));
             enemyHero.setStat("gold", enemyHero.getStat("gold") - enemyHero.incStat("magic", rng.nextInt(2) + 1));
             enemyHero.setStat("gold", enemyHero.getStat("gold") - enemyHero.incStat("wisdom", rng.nextInt(2) + 1));
@@ -582,53 +234,16 @@ public class Core {
             currentUnit.getOwner().turn = true;
             currentUnit.backed = true;
         }
+        if (versus && currentUnit.getOwner() != map.getSortedUnits().get(0).getOwner()) {
+            if (turn == State.PlAYER1) {
+                turn = State.PLAYER2;
+            } else {
+                turn = State.PlAYER1;
+            }
+        }
         currentUnit = map.getSortedUnits().get(0);
         map.clearDisplay();
         map.displayMovableTiles(currentUnit);
         printOrder();
-    }
-
-    public static Unit buyUnits(String id, int size, Hero h) throws Exception {
-        Unit units = null;
-        int price = 0;
-        boolean e = false;
-        switch (id) {
-            case "g":
-                units = new Griffin(h, size);
-                break;
-            case "f":
-                units = new Farmer(h, size);
-                break;
-            case "a":
-                units = new Archer(h, size);
-                break;
-            case "k":
-                units = new Knight(h, size);
-                break;
-            case "p":
-                units = new Paladin(h, size);
-                break;
-            default:
-                e = true;
-                break;
-        }
-        price = units.getStat("cost") * size;
-        if (e) {
-            throw new Exception("Argument error: Id does not exists!");
-        }
-
-        if (price > h.getStat("gold")) {
-            throw new Exception(
-                    "Core error: price exceeds current budget! Price: " + price + " budget: " + h.getStat("gold"));
-        }
-        if (price == h.getStat("gold")) {
-            println("Warning: Price will deplete the heroes budget! Proceeding anyways!");
-        }
-        h.setStat("gold", h.getStat("gold") - price);
-        return units;
-    }
-
-    static void clearConsole() {
-        System.out.print("\033\143");
     }
 }

@@ -19,8 +19,8 @@ public class Start extends Command {
     protected void doCommand(ArrayList<Object> args) throws CommandException {
         Battlefield map = getMap();
         boolean cantStart = false;
-        if (getHeroUnits() != null) {
-            if (getHeroUnits().isEmpty()) {
+        if (getHeroUnitList() != null) {
+            if (getHeroUnitList().isEmpty()) {
                 cantStart = true;
             }
         } else {

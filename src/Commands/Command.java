@@ -16,22 +16,13 @@ public abstract class Command implements Type {
     protected final CommandParser parser = CommandCompiler.parser;
     protected final Type[] argTypes;
     public static final Class<Command> TYPE = Command.class;
-
     protected static Random rng = Core.rng;
-    /*
-     * protected static Battlefield map = Core.map;
-     * protected static Unit currentUnit = Core.currentUnit;
-     * protected static String state = Core.state;
-     * protected static int turnCount = Core.turnCount;
-     * protected static int difficulty = Core.difficulty;
-     * protected static Hero enemyHero = Core.enemyHero;
-     * protected static Hero hero = Core.hero;
-     */
 
     private final Hero dummy = new Hero();
     protected final Unit units[] = { new Griffin(dummy, 1), new Archer(dummy, 1), new Farmer(dummy, 1) };
+    protected final String unitIDs = "afgkp";
 
-    protected Command(int params, State commadState, Type... argTypes) throws CommandException {
+    public Command(int params, State commadState, Type... argTypes) throws CommandException {
         this.params = params;
         this.commandState = commadState;
         this.argTypes = argTypes;
@@ -162,11 +153,11 @@ public abstract class Command implements Type {
         Core.enemyHero = hero;
     }
 
-    protected static ArrayList<Unit> getHeroUnits() {
+    protected static ArrayList<Unit> getHeroUnitList() {
         return Core.heroUnits;
     }
 
-    protected static ArrayList<Unit> getEnemHeroUnits() {
+    protected static ArrayList<Unit> getEnemyHeroUnitList() {
         return Core.enemyHeroUnits;
     }
 
@@ -176,5 +167,27 @@ public abstract class Command implements Type {
 
     protected static boolean getVersus() {
         return Core.versus;
+    }
+
+    protected static State getTurn() {
+        return Core.turn;
+    }
+
+    protected static void setTurn(State turn) {
+        Core.turn = turn;
+    }
+
+    protected static List<Unit> getCurrentUnitList() {
+        if (getTurn() == State.PlAYER1) {
+            return getHeroUnitList();
+        }
+        return getEnemyHeroUnitList();
+    }
+
+    protected static Hero getCurrentHero() {
+        if (getTurn() == State.PlAYER1) {
+            return getHero();
+        }
+        return getEnemyHero();
     }
 }

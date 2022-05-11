@@ -3,7 +3,8 @@ package Core;
 import java.util.Hashtable;
 import java.util.TreeMap;
 
-import Units.Unit;
+import GameExceptions.HeroException;
+import Units.*;
 
 import java.util.Iterator;
 
@@ -11,7 +12,7 @@ public class Hero {
 
     // Stats attack, defense, magic, wisdom, morale, luck, mana, gold
     private Hashtable<String, Integer> stats = new Hashtable<>();
-    private double statCost = 5.0;
+    private double statCost = 4.8;
     private String name;
     public boolean turn = true;
     public String[] spells = { "", "", "", "", "" };
@@ -92,16 +93,21 @@ public class Hero {
         turn = false;
     }
 
-    public int incStat(String stat, int amount) throws Exception {
+    public int incStat(String stat, int amount) throws HeroException {
+        try {
+            this.stats.get(stat);
+        } catch (NullPointerException e) {
+            throw new HeroException("Stat does not exists!");
+        }
         double tempPrice = this.statCost;
         if (this.stats.get(stat) == 10) {
-            throw new Exception("Argument error: stat \"" + stat + "\" already reached the maximum value!");
+            throw new HeroException("Stat \"" + stat + "\" already reached the maximum value!");
         }
         if (stat.equals("gold")) {
-            throw new Exception("Argument error: stat \"" + stat + "\" cannot be increased!");
+            throw new HeroException("Stat \"" + stat + "\" cannot be increased!");
         }
         if (this.stats.get(stat) + amount > 10) {
-            throw new Exception("Core error: stat cannot be increased beyond the maximum value!");
+            throw new HeroException("Stat cannot be increased beyond the maximum value!");
         }
         for (int i = 0; i < amount; i++) {
             double interest = (double) Math.ceil(tempPrice) * 0.1;
@@ -109,9 +115,8 @@ public class Hero {
         }
         tempPrice = (double) Math.ceil(tempPrice);
         if ((int) tempPrice > this.getStat("gold")) {
-            throw new Exception(
-                    "Core error: price exceeds current budget! Price: " + tempPrice + " budget: "
-                            + this.getStat("gold"));
+            throw new HeroException(
+                    "Price exceeds current budget! Price: " + tempPrice + " budget: " + this.getStat("gold"));
         }
         this.stats.put(stat, this.stats.get(stat) + amount);
         if (stat.equals("wisdom")) {
@@ -120,6 +125,41 @@ public class Hero {
         }
         this.statCost = tempPrice;
         return (int) tempPrice;
+    }
+
+    public Unit buyUnits(String id, int size) throws HeroException {
+        Unit units = null;
+        int price = 0;
+        switch (id) {
+            case "g":
+                units = new Griffin(this, size);
+                break;
+            case "f":
+                units = new Farmer(this, size);
+                break;
+            case "a":
+                units = new Archer(this, size);
+                break;
+            case "k":
+                units = new Knight(this, size);
+                break;
+            case "p":
+                units = new Paladin(this, size);
+                break;
+            default:
+                throw new HeroException("Id does not exists!");
+        }
+        price = units.getStat("cost") * size;
+
+        if (price > getStat("gold")) {
+            throw new HeroException(
+                    "Price exceeds current budget! Price: " + price + " budget: " + getStat("gold"));
+        }
+        if (price == getStat("gold")) {
+            Core.println("Warning: Price will deplete the heroes budget! Proceeding anyways!");
+        }
+        setStat("gold", getStat("gold") - price);
+        return units;
     }
 
     public Hashtable<String, Integer> getStatsDict() {
@@ -142,7 +182,7 @@ public class Hero {
         this.stats.put(stat, value);
     }
 
-    public int getStat(String stat) {
+    public int getStat(String stat) throws NullPointerException {
         return this.stats.get(stat);
     }
 
