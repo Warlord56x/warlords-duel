@@ -11,10 +11,11 @@ public class CommandCompiler {
     public static void execute(String line) throws CommandException, ParserException {
         Class<? extends Command> command = parser.parse(line);
         try {
-            command.getMethod("command", String.class).invoke(command.getDeclaredConstructor().newInstance(), line);
+            if (command != null) {
+                command.getMethod("command", String.class).invoke(command.getDeclaredConstructor().newInstance(), line);
+            }
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException | InstantiationException e) {
-            e.printStackTrace();
         }
     }
 

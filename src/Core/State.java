@@ -5,6 +5,8 @@ public enum State {
     BATTLE,
     GLOBAL,
     IGNORE,
+
+    AI,
     PlAYER1,
-    PLAYER2
+    PLAYER2;
 }

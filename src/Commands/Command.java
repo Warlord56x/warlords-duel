@@ -65,7 +65,7 @@ public abstract class Command implements Type {
             i++;
         }
 
-        if (commandState != getState()) {
+        if (commandState != getState() && commandState != State.GLOBAL) {
             throw new ParserException("This command cannot be used in this state, state:" + getState().name()
                     + " expected: " + commandState);
         }

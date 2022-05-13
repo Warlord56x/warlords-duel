@@ -10,6 +10,8 @@ import GameExceptions.ParserException;
 public class CommandParser {
     private static List<Class<? extends Command>> commands = new ArrayList<>();
     private static final String commandRegex = "^\s*([a-z]|[A-Z])*(\s+.+)*$";
+    private final ParserException notFound = new ParserException("This command does not exists!");
+    private static final double initialThreshold = 0.4;
 
     public CommandParser(String packageName) {
         try {
@@ -59,18 +61,42 @@ public class CommandParser {
     public Class<? extends Command> parse(String line) throws ParserException {
 
         if (!line.matches(commandRegex)) {
-            throw new ParserException("This command does not exists!");
+            throw notFound;
         }
         line = line.toLowerCase();
         String[] args = line.split(" ");
         String name = args[0];
 
         for (Class<? extends Command> command : commands) {
-            if (command.getSimpleName().toLowerCase().equals(name)) {
+            String commandName = command.getSimpleName().toLowerCase();
+            if (commandName.equals(name)) {
                 return command;
             }
+            if (isAbbreviation(commandName, name)) {
+                throw new ParserException(
+                        "Command: \"" + name + "\" does not exists! Did you mean: \"" + commandName + "\"?");
+            }
         }
-        return null;
+        throw notFound;
+    }
+
+    public static boolean isAbbreviation(String commandName, String testName) {
+        char[] testLetters = testName.toLowerCase().toCharArray();
+        char[] letters = commandName.toLowerCase().toCharArray();
+        double matchThreshold = initialThreshold;
+        int match = 0;
+
+        for (int i = 0; i < letters.length; i++) {
+            if (i < testLetters.length) {
+                if (letters[i] == (testLetters[i])) {
+                    match++;
+                }
+            }
+        }
+        if ((int) Math.round(testLetters.length * matchThreshold) >= (int) commandName.length() - match) {
+            return true;
+        }
+        return false;
     }
 
 }
