@@ -15,7 +15,7 @@ public class CommandCompiler {
                 command.getMethod("command", String.class).invoke(command.getDeclaredConstructor().newInstance(), line);
             }
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException | InstantiationException e) {
+                | SecurityException | InstantiationException ignored) {
         }
     }
 

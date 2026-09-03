@@ -8,8 +8,6 @@ import Units.*;
 
 public class Core {
 
-    // public static final String[] spells = { "resurrect", "fireball", "fullheal",
-    // "stun", "thunderbolt" };
     public static Battlefield map = new Battlefield(12, 10);
     public static Hero enemyHero = new Hero("eHero", 1);
     public static ArrayList<Unit> enemyHeroUnits = new ArrayList<>();
@@ -25,7 +23,7 @@ public class Core {
     public static int difficulty = 0;
     public static int turnCount = 0;
 
-    // Shorthand Formatted sysout overrides
+    // Shorthand Formatted sys out overrides
     public static void println() {
         System.out.println();
     }
@@ -69,11 +67,11 @@ public class Core {
     }
 
     static void printOrder() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (Unit unit : map.getSortedUnits()) {
-            str += unit.getName() + " - " + unit.getOwner().getName() + " ";
+            str.append(unit.getName()).append(" - ").append(unit.getOwner().getName()).append(" ");
         }
-        println(str);
+        println(str.toString());
     }
 
     public static void next() {

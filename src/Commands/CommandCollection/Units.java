@@ -15,11 +15,11 @@ public final class Units extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        String str = "\n";
+        StringBuilder str = new StringBuilder("\n");
         for (Unit unit : units) {
-            str += unit.getName() + "\n";
+            str.append(unit.getName()).append("\n");
         }
-        println(str);
+        println(str.toString());
     }
 
 }

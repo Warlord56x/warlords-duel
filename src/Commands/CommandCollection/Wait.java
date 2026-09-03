@@ -14,7 +14,6 @@ public final class Wait extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        return;
     }
 
 }

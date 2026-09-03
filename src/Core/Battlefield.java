@@ -2,13 +2,15 @@ package Core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 import Units.*;
+import org.jetbrains.annotations.NotNull;
 
 public class Battlefield {
-    private String[][] map;
-    private ArrayList<Unit> placedUnits = new ArrayList<>();
-    private ArrayList<Unit> sortedUnits = new ArrayList<>();
+    private final String[][] map;
+    private final ArrayList<Unit> placedUnits = new ArrayList<>();
+    private final ArrayList<Unit> sortedUnits = new ArrayList<>();
     public final String emptyTile = "[  ]";
     public final String moveTile = "[||]";
     public final int[] wh;
@@ -34,7 +36,7 @@ public class Battlefield {
         wh[1] = height;
     }
 
-    public int distanceTo(Unit unit1, Unit unit2) {
+    public int distanceTo(@NotNull Unit unit1, @NotNull Unit unit2) {
         // Using manhattan distance
         int x1 = unit1.position[0];
         int y1 = unit1.position[1];
@@ -43,7 +45,7 @@ public class Battlefield {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
 
-    public int distanceTo(int x1, int y1, Unit unit2) {
+    public int distanceTo(int x1, int y1, @NotNull Unit unit2) {
         // Using manhattan distance
         int x2 = unit2.position[0];
         int y2 = unit2.position[1];
@@ -75,17 +77,17 @@ public class Battlefield {
 
     @Override
     public String toString() {
-        String field = "";
+        StringBuilder field = new StringBuilder();
         for (String[] col : map) {
-            for (int i = 0; i < col.length; i++) {
-                field += col[i];
+            for (String s : col) {
+                field.append(s);
             }
             if (col == map[map.length - 1]) {
-                return field;
+                return field.toString();
             }
-            field += "\n";
+            field.append("\n");
         }
-        return field;
+        return field.toString();
     }
 
     public void placeUnit(Unit unit, int posx, int posy, String turn) throws Exception {
@@ -96,12 +98,12 @@ public class Battlefield {
         }
 
         if (turn.equals("player")) {
-            if (posx > 2 || map[posy][posx] != emptyTile) {
+            if (posx > 2 || !map[posy][posx].equals(emptyTile)) {
                 throw new Exception("Map error: invalid position!" + posx + " : " + posy);
             }
         }
         if (turn.equals("enemy")) {
-            if (posx < 10 || map[posy][posx] != emptyTile) {
+            if (posx < 10 || !map[posy][posx].equals(emptyTile)) {
                 throw new Exception("Map error: invalid position! " + posx + " : " + posy);
             }
         }
@@ -116,10 +118,7 @@ public class Battlefield {
     }
 
     public Boolean isPlaced(Unit unit) {
-        if (placedUnits.contains(unit)) {
-            return true;
-        }
-        return false;
+        return placedUnits.contains(unit);
     }
 
     public void displayMovableTiles(Unit unit) {
@@ -150,7 +149,7 @@ public class Battlefield {
             }
             for (int i = 0; i < wh[1] + 1; i++) {
                 for (int j = 0; j < wh[0] + 1; j++) {
-                    if (b[i][j] == moveTile) {
+                    if (b[i][j].equals(moveTile)) {
                         if (map[i][j].equals(emptyTile)) {
                             this.map[i][j] = moveTile;
                         }
@@ -179,6 +178,7 @@ public class Battlefield {
         for (Unit unit : placedUnits) {
             if (unit.getOwner() == Core.hero) {
                 lose = false;
+                break;
             }
         }
         return lose;
@@ -189,6 +189,7 @@ public class Battlefield {
         for (Unit unit : placedUnits) {
             if (unit.getOwner() == Core.enemyHero) {
                 win = false;
+                break;
             }
         }
         return win;

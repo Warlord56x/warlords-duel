@@ -8,6 +8,7 @@ import java.util.List;
 import GameExceptions.*;
 import Units.*;
 import Core.*;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Command implements Type {
 
@@ -15,11 +16,11 @@ public abstract class Command implements Type {
     protected final State commandState;
     protected final CommandParser parser = CommandCompiler.parser;
     protected final Type[] argTypes;
-    public static final Class<Command> TYPE = Command.class;
+    public static Class<Command> TYPE = Command.class;
     protected static Random rng = Core.rng;
 
     private final Hero dummy = new Hero();
-    protected final Unit units[] = { new Griffin(dummy, 1), new Archer(dummy, 1), new Farmer(dummy, 1) };
+    protected final Unit[] units = { new Griffin(dummy, 1), new Archer(dummy, 1), new Farmer(dummy, 1) };
     protected final String unitIDs = "afgkp";
 
     public Command(int params, State commadState, Type... argTypes) throws CommandException {
@@ -39,7 +40,7 @@ public abstract class Command implements Type {
         Core.println(s);
     }
 
-    public void command(String line) throws ParserException {
+    public void command(@NotNull String line) throws ParserException {
         String[] lineS = line.split(" ");
         ArrayList<Object> args = new ArrayList<>();
         int i = 1;

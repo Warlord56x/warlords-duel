@@ -11,6 +11,7 @@ import GameExceptions.CommandException;
 import GameExceptions.HeroException;
 import GameExceptions.ParserException;
 import Units.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -52,7 +53,7 @@ public class Hero {
 
     public void addSpell(String spell) throws Exception {
         for (int i = 0; i < spells.length; i++) {
-            if (spells[i].equals("")) {
+            if (spells[i].isEmpty()) {
                 spells[i] = spell;
                 return;
             }
@@ -170,7 +171,6 @@ public class Hero {
     static void moveAI() throws Exception {
         int min = Integer.MAX_VALUE;
         Unit minUnit = aiGetClosestUnit();
-        min = Integer.MAX_VALUE;
         int posx = 1;
         int posy = 1;
         String[][] mapDup = Core.map.getMap();
@@ -287,28 +287,17 @@ public class Hero {
         }
     }
 
-    public Unit buyUnits(String id, int size) throws HeroException {
-        Unit units = null;
-        int price = 0;
-        switch (id) {
-            case "g":
-                units = new Griffin(this, size);
-                break;
-            case "f":
-                units = new Farmer(this, size);
-                break;
-            case "a":
-                units = new Archer(this, size);
-                break;
-            case "k":
-                units = new Knight(this, size);
-                break;
-            case "p":
-                units = new Paladin(this, size);
-                break;
-            default:
-                throw new HeroException("Id does not exists!");
-        }
+    public Unit buyUnits(@NotNull String id, int size) throws HeroException {
+        Unit units;
+        int price;
+        units = switch (id) {
+            case "g" -> new Griffin(this, size);
+            case "f" -> new Farmer(this, size);
+            case "a" -> new Archer(this, size);
+            case "k" -> new Knight(this, size);
+            case "p" -> new Paladin(this, size);
+            default -> throw new HeroException("Id does not exists!");
+        };
         price = units.getStat("cost") * size;
 
         if (price > getStat("gold")) {
@@ -349,15 +338,15 @@ public class Hero {
     @Override
     public String toString() {
 
-        String panel = "Name: " + name;
+        StringBuilder panel = new StringBuilder("Name: " + name);
 
         Iterator<String> keys = getKeysSorted();
         while (keys.hasNext()) {
             String element = keys.next();
-            panel += "\n" + element + ": " + stats.get(element);
+            panel.append("\n").append(element).append(": ").append(stats.get(element));
         }
 
-        return panel;
+        return panel.toString();
     }
 
     public String getName() {

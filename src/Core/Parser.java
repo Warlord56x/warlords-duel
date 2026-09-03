@@ -8,7 +8,7 @@ import java.util.TreeMap;
 public class Parser {
 
     // private static final String unitIds = "fgi";
-    private Hashtable<String, Integer> commands = new Hashtable<>();
+    private final Hashtable<String, Integer> commands = new Hashtable<>();
 
     public Parser() {
         commands.put("inc", 2);
@@ -42,9 +42,7 @@ public class Parser {
     public String parse(Scanner line) throws Exception {
         String parsing = line.nextLine().toLowerCase();
 
-        Iterator<String> commandsIterable = commands.keySet().iterator();
-        while (commandsIterable.hasNext()) {
-            String command = commandsIterable.next();
+        for (String command : commands.keySet()) {
             if (parsing.contains(command)) {
                 int args = parsing.split(" ").length - 1;
                 if (args != commands.get(command)) {
@@ -60,13 +58,11 @@ public class Parser {
     }
 
     public String commandsTable() {
-        String str = "";
-        Iterator<String> iterator = new TreeMap<String, Integer>(this.commands).keySet().iterator();
-        while (iterator.hasNext()) {
-            String element = iterator.next();
-            str += element + "\t --number of parameters required: " + this.commands.get(element) + "\n";
+        StringBuilder str = new StringBuilder();
+        for (String element : new TreeMap<>(this.commands).keySet()) {
+            str.append(element).append("\t --number of parameters required: ").append(this.commands.get(element)).append("\n");
         }
-        return str;
+        return str.toString();
     }
 
     public Hashtable<String, Integer> getCommands() {

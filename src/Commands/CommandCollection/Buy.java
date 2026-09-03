@@ -2,6 +2,7 @@ package Commands.CommandCollection;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import Commands.Command;
 import Core.State;
@@ -12,7 +13,7 @@ import Units.Unit;
 public final class Buy extends Command {
 
     public Buy() throws CommandException {
-        super(2, State.TACTICAL, new Type[] { String.class, Integer.TYPE });
+        super(2, State.TACTICAL, String.class, Integer.TYPE);
     }
 
     @Override
@@ -33,7 +34,7 @@ public final class Buy extends Command {
             temp = new CommandException(e.getMessage());
             msg = e.getMessage();
         } finally {
-            if (msg == "noerror") {
+            if (Objects.equals(msg, "noerror")) {
                 println(msg);
                 return;
             }

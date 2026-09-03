@@ -15,8 +15,8 @@ public class EnemyUnits extends Command {
 
     @Override
     protected void doCommand(ArrayList<Object> args) throws CommandException {
-        String str = "";
-        Boolean e = false;
+        StringBuilder str = new StringBuilder();
+        boolean e = false;
         if (getEnemyHeroUnitList() != null) {
             if (getEnemyHeroUnitList().isEmpty()) {
                 e = true;
@@ -28,9 +28,9 @@ public class EnemyUnits extends Command {
             throw new CommandException("Hero doesn't have any units!");
         }
         for (Unit unit : getEnemyHeroUnitList()) {
-            str += "Name: " + unit.getName() + " size: " + unit.getSize() + "\n";
+            str.append("Name: ").append(unit.getName()).append(" size: ").append(unit.getSize()).append("\n");
         }
-        println(str);
+        println(str.toString());
 
     }
 

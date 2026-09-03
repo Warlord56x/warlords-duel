@@ -18,7 +18,7 @@ public class Refund extends Command {
         int refund = 0;
         for (Unit unit : getCurrentUnitList()) {
             refund += unit.getStat("cost") * unit.getSize();
-            println(unit.getStat("cost") + "" + "" + unit.getSize());
+            println(unit.getStat("cost") + "" + unit.getSize());
         }
         getHero().setStat("gold", getHero().getStat("gold") + refund);
         println("Current gold: " + getHero().getStat("gold"));

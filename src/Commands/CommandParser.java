@@ -1,15 +1,15 @@
 package Commands;
 
-import java.io.FilenameFilter;
+import GameExceptions.ParserException;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
-
-import GameExceptions.ParserException;
 
 public class CommandParser {
-    private static List<Class<? extends Command>> commands = new ArrayList<>();
-    private static final String commandRegex = "^\s*([a-z]|[A-Z])*(\s+.+)*$";
+    private static final List<Class<? extends Command>> commands = new ArrayList<>();
+    private static final String commandRegex = "^ *([a-z]|[A-Z])*( +.+)*$";
     private final ParserException notFound = new ParserException("This command does not exists!");
     private static final double initialThreshold = 0.4;
 
@@ -17,7 +17,7 @@ public class CommandParser {
         try {
             loadCommands(packageName);
         } catch (ClassNotFoundException e) {
-            System.out.println("");
+            System.out.println();
             e.printStackTrace();
         }
     }
@@ -25,7 +25,7 @@ public class CommandParser {
     public List<String> getCommandsList() {
         ArrayList<String> commandList = new ArrayList<>();
         for (Class<?> command : commands) {
-            commandList.add(command.getClass().getSimpleName());
+            commandList.add(command.getSimpleName());
         }
         return commandList;
     }
@@ -37,21 +37,18 @@ public class CommandParser {
      * }
      */
 
-    public void loadCommands(String path) throws ClassNotFoundException {
-        String packageName = path;
-        java.net.URL root = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/"));
+    public void loadCommands(@NotNull String path) throws ClassNotFoundException {
+        java.net.URL root = Thread.currentThread().getContextClassLoader().getResource(path.replace(".", "/"));
 
         // Filter .class files.
-        File[] files = new File(root.getFile()).listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".class");
-            }
-        });
+        assert root != null;
+        File[] files = new File(root.getFile()).listFiles((dir, name) -> name.endsWith(".class"));
 
         // Find classes implementing Command.
+        assert files != null;
         for (File file : files) {
             String className = file.getName().replaceAll(".class$", "");
-            Class<?> cls = Class.forName(packageName + "." + className);
+            Class<?> cls = Class.forName(path + "." + className);
             if (Command.class.isAssignableFrom(cls)) {
                 commands.add(cls.asSubclass(Command.class));
             }
@@ -83,7 +80,6 @@ public class CommandParser {
     public static boolean isAbbreviation(String commandName, String testName) {
         char[] testLetters = testName.toLowerCase().toCharArray();
         char[] letters = commandName.toLowerCase().toCharArray();
-        double matchThreshold = initialThreshold;
         int match = 0;
 
         for (int i = 0; i < letters.length; i++) {
@@ -93,10 +89,7 @@ public class CommandParser {
                 }
             }
         }
-        if ((int) Math.round(testLetters.length * matchThreshold) >= (int) commandName.length() - match) {
-            return true;
-        }
-        return false;
+        return (int) Math.round(testLetters.length * initialThreshold) >= commandName.length() - match;
     }
 
 }

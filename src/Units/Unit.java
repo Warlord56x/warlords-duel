@@ -2,6 +2,7 @@ package Units;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import Core.*;
@@ -82,7 +83,6 @@ public abstract class Unit implements Comparable<Unit> {
         if (unit == null) {
             return;
         }
-        backed = false;
         int damage = (Core.rng.nextInt(getStat("maxAttack")) + getStat("minAttack")) * getSize();
         unit.takeDamage(null, damage);
     }
@@ -90,7 +90,7 @@ public abstract class Unit implements Comparable<Unit> {
     public int getAttack() {
         double damage = (Core.rng.nextInt(getStat("maxAttack")) + getStat("minAttack"))
                 * getSize();
-        double dBonus = (getOwner().getStat("attack") * 10) / 100;
+        double dBonus = (double) (getOwner().getStat("attack") * 10) / 100;
         damage = damage + dBonus;
         return (int) Math.round(damage);
     }
@@ -157,26 +157,26 @@ public abstract class Unit implements Comparable<Unit> {
     }
 
     public Iterator<String> getKeysSorted() {
-        return new TreeMap<String, Integer>(this.stats).keySet().iterator();
+        return new TreeMap<>(this.stats).keySet().iterator();
     }
 
     @Override
     public String toString() {
 
-        String panel = "Name: " + name;
+        StringBuilder panel = new StringBuilder("Name: " + name);
 
         Iterator<String> keys = getKeysSorted();
         while (keys.hasNext()) {
             String element = keys.next();
-            if (element == "minAttack" || element == "maxAttack") {
-                panel += element == "minAttack" ? "\nattack:" + stats.get("minAttack") + " - " + stats.get("maxAttack")
-                        : "";
+            if (Objects.equals(element, "minAttack") || Objects.equals(element, "maxAttack")) {
+                panel.append(element.equals("minAttack") ? "\nattack:" + stats.get("minAttack") + " - " + stats.get("maxAttack")
+                        : "");
                 continue;
             }
-            panel += "\n" + element + ": " + stats.get(element);
+            panel.append("\n").append(element).append(": ").append(stats.get(element));
         }
 
-        return panel;
+        return panel.toString();
     }
 
     @Override

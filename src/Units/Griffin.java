@@ -15,7 +15,7 @@ public final class Griffin extends Unit {
         }
         backed = true;
         double damage = (Core.Core.rng.nextInt(getStat("maxAttack")) + getStat("minAttack")) * getSize();
-        double dBonus = (getOwner().getStat("attack") * 10) / 100;
+        double dBonus = (double) (getOwner().getStat("attack") * 10) / 100;
         damage = damage + dBonus;
         unit.takeDamage(null, (int) Math.round(damage));
     }
